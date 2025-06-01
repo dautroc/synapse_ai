@@ -34,7 +34,7 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
         expect(response).to be_a(SynapseAi::Response)
         expect(response).to be_success
         expect(response.content).not_to be_empty
-        expect(response.token_usage).to include("prompt_tokens", "completion_tokens", "total_tokens")
+        expect(response.token_usage).to include(:prompt_tokens, :completion_tokens, :total_tokens)
       end
     end
 
@@ -49,7 +49,7 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
         response = bad_key_adapter.chat(messages: valid_messages)
         expect(response).to be_a(SynapseAi::Response)
         expect(response).to be_failure
-        expect(response.error).to match(/server responded with status 401|Incorrect API key|Invalid API key/i)
+        expect(response.error_message).to match(/server responded with status 401|Incorrect API key|Invalid API key/i)
       end
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
         expect(response).to be_a(SynapseAi::Response)
         expect(response).to be_success
         expect(response.content).not_to be_empty
-        expect(response.token_usage).to include("prompt_tokens", "completion_tokens", "total_tokens")
+        expect(response.token_usage).to include(:prompt_tokens, :completion_tokens, :total_tokens)
       end
     end
 
@@ -89,7 +89,7 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
         expect(response.content).to be_an(Array)
         expect(response.content.first).to be_a(Float)
         expect(response.content.size).to be > 100 # OpenAI embeddings are large, e.g., 1536 for ada-002 or 3-small
-        expect(response.token_usage).to include("prompt_tokens", "total_tokens")
+        expect(response.token_usage).to include(:prompt_tokens, :total_tokens)
       end
 
       it "allows specifying a different model", vcr: { cassette_name: "openai_embed_custom_model" } do
@@ -107,7 +107,9 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
         bad_key_adapter = described_class.new(api_key: "sk-invalidkey123")
         response = bad_key_adapter.embed(text: text_to_embed)
         expect(response).to be_failure
-        expect(response.error).to match(/Incorrect API key provided|Invalid API key|server responded with status 401/i)
+        expect(response.error_message).to match(
+          /Incorrect API key provided|Invalid API key|server responded with status 401/i
+        )
       end
     end
   end

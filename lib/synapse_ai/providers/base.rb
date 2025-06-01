@@ -4,7 +4,11 @@
 # It provides a common interface for all AI providers.
 module SynapseAi
   module Providers
+    # Abstract base class for AI provider adapters.
+    # Defines the interface that all provider-specific adapters should implement.
     class Base
+      # Initializes the provider adapter.
+      # Subclasses should call super and then perform any provider-specific setup.
       def chat(messages:, **options)
         raise NotImplementedError, "#{self.class.name} must implement #chat"
       end

@@ -4,6 +4,9 @@ require "rails/railtie"
 require_relative "synapse_ai"
 
 module SynapseAi
+  # Integrates SynapseAI with Ruby on Rails applications.
+  # This Railtie makes SynapseAI configuration available during Rails initialization
+  # and logs a warning if the default provider (OpenAI) is selected without an API key.
   class Railtie < Rails::Railtie
     # Allows configuration of SynapseAI through Rails application's initializers
     # Example: config/initializers/synapse_ai.rb
@@ -27,14 +30,15 @@ module SynapseAi
     # end
 
     config.after_initialize do
-      if SynapseAi.configuration.provider == :openai &&
-         (SynapseAi.configuration.openai_api_key.nil? || SynapseAi.configuration.openai_api_key.empty?)
-        Rails.logger.warn "[SynapseAI] OpenAI provider is selected, but OPENAI_API_KEY is not configured. SynapseAI may not function correctly."
+      if SynapseAi.configuration.provider == :openai && SynapseAi.configuration.openai_api_key.nil?
+        Rails.logger.warn "[SynapseAI] OpenAI provider selected, but OPENAI_API_KEY is not set. " \
+                          "SynapseAI may not function correctly."
       end
 
       if SynapseAi.configuration.provider == :google_gemini &&
          (SynapseAi.configuration.google_gemini_api_key.nil? || SynapseAi.configuration.google_gemini_api_key.empty?)
-        Rails.logger.warn "[SynapseAI] Google Gemini provider is selected, but GOOGLE_GEMINI_API_KEY is not configured. SynapseAI may not function correctly."
+        Rails.logger.warn "[SynapseAI] Google Gemini provider selected, but GOOGLE_GEMINI_API_KEY " \
+                          "is not configured. SynapseAI may not function correctly."
       end
     end
 

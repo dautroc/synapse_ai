@@ -4,6 +4,7 @@ require "rails/generators/base"
 
 module SynapseAi
   module Generators
+    # Installs SynapseAI configuration files.
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path("templates", __dir__)
 

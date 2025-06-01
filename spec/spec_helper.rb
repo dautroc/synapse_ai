@@ -11,7 +11,7 @@ VCR.configure do |config|
   config.hook_into :webmock
   config.configure_rspec_metadata!
   # Optional: filter sensitive data
-  config.filter_sensitive_data("<OPENAI_API_KEY>") { ENV["OPENAI_API_KEY"] }
+  config.filter_sensitive_data("<OPENAI_API_KEY>") { ENV.fetch("OPENAI_API_KEY", nil) }
 end
 
 RSpec.configure do |config|
@@ -26,5 +26,5 @@ RSpec.configure do |config|
   end
 
   # If using VCR with RSpec metadata integration
-  config.treat_symbols_as_metadata_keys_with_true_values = true # Recommended for RSpec 3+
+  # config.treat_symbols_as_metadata_keys_with_true_values = true # Recommended for RSpec 3+
 end

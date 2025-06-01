@@ -10,75 +10,85 @@ require_relative "synapse_ai/providers/google_gemini_adapter"
 # require_relative "synapse_ai/providers/google_adapter"
 
 require_relative "synapse_ai/railtie" if defined?(Rails::Railtie)
+require "zeitwerk"
+loader = Zeitwerk::Loader.for_gem
+loader.ignore("#{__dir__}/generators")
+loader.setup
 
+# Main module for the SynapseAI gem.
+# Provides top-level methods for configuration and interaction with AI providers.
 module SynapseAi
   class Error < StandardError; end
   class ConfigurationError < Error; end
   class ProviderError < Error; end
 
   class << self
-    # Provides access to the currently configured provider instance.
-    # Raises ConfigurationError if the provider is not configured or supported.
-    #
-    # @param requested_provider [Symbol, String] The specific provider to use (optional).
-    # @return [SynapseAi::Providers::Base] An instance of the AI provider adapter.
-    def current_provider(requested_provider = nil)
-      provider_name = requested_provider || configuration.provider
-      api_key = nil
+    attr_writer :configuration
 
-      case provider_name.to_sym
-      when :openai
-        Providers::OpenAIAdapter.new(api_key: configuration.openai_api_key)
-      when :google_gemini
-        Providers::GoogleGeminiAdapter.new
-      else
-        raise ConfigurationError, "Unsupported AI provider: #{provider_name}"
-      end
-    rescue ArgumentError => e # Catches API key missing from adapter constructor if one is explicitly required
-      raise ConfigurationError, e.message
-    rescue SynapseAi::ConfigurationError => e # Corrected: Catch our own config errors from adapter init
-      raise e # Re-raise
+    def configuration
+      @configuration ||= Configuration.new
     end
 
-    # Generates a chat completion using the configured AI provider.
+    def configure
+      yield(configuration)
+    end
+
+    # Determines and returns the current AI provider instance based on configuration.
+    # It prioritizes the `requested_provider` if provided, otherwise uses the configured default.
+    # Raises a `ConfigurationError` if the selected provider is not implemented or if its API key is missing.
+    def current_provider(requested_provider = nil)
+      provider_key = requested_provider || configuration.provider
+
+      case provider_key
+      when :openai
+        api_key_to_use = configuration.openai_api_key
+        Providers::OpenAIAdapter.new(api_key: api_key_to_use)
+      when :google_gemini
+        raise ConfigurationError, "Google Gemini provider not yet fully implemented."
+      else
+        raise ConfigurationError, "Unsupported AI provider: #{provider_key}"
+      end
+    rescue ArgumentError => e # Catches API key missing from adapter constructor
+      raise ConfigurationError, "API key not configured for #{provider_key}: #{e.message}"
+    end
+
+    # Delegates the chat request to the current or specified provider.
     #
-    # @param messages [Array<Hash>] An array of message objects.
-    # @param options [Hash] Provider-specific options.
-    # @option options [Symbol, String] :provider Override the default provider for this call.
-    # @return [SynapseAi::Response] A standardized response object.
+    # @param messages [Array<Hash>] A list of message objects.
+    # @param options [Hash] Additional options for the provider.
+    # @option options [Symbol] :provider Override the default provider for this call.
+    # @return [SynapseAi::Response] The response from the AI provider.
     def chat(messages:, **options)
       provider_override = options.delete(:provider)
       current_provider(provider_override).chat(messages: messages, **options)
     rescue StandardError => e
-      SynapseAi::Response.new(error: "SynapseAI.chat failed: #{e.message}", status: :error)
+      Response.new(success: false, error_message: e.message, raw_response: e)
     end
 
-    # Generates text using the configured AI provider.
+    # Delegates the text generation request to the current or specified provider.
     #
-    # @param prompt [String] The prompt to generate text from.
-    # @param options [Hash] Provider-specific options.
-    # @option options [Symbol, String] :provider Override the default provider for this call.
-    # @return [SynapseAi::Response] A standardized response object.
+    # @param prompt [String] The prompt for text generation.
+    # @param options [Hash] Additional options for the provider.
+    # @option options [Symbol] :provider Override the default provider for this call.
+    # @return [SynapseAi::Response] The response from the AI provider.
     def generate_text(prompt:, **options)
       provider_override = options.delete(:provider)
       current_provider(provider_override).generate_text(prompt: prompt, **options)
     rescue StandardError => e
-      SynapseAi::Response.new(error: "SynapseAI.generate_text failed: #{e.message}", status: :error)
+      Response.new(success: false, error_message: e.message, raw_response: e)
     end
 
-    # Generates an embedding for the given text using the configured AI provider.
+    # Delegates the embedding request to the current or specified provider.
     #
     # @param text [String] The text to embed.
-    # @param options [Hash] Provider-specific options.
-    # @option options [String] :model The specific embedding model to use.
-    # @option options [Symbol, String] :provider Override the default provider for this call.
-    # @return [SynapseAi::Response] A standardized response object containing the embedding vector.
+    # @param options [Hash] Additional options for the provider.
+    # @option options [Symbol] :provider Override the default provider for this call.
+    # @return [SynapseAi::Response] The response from the AI provider.
     def embed(text:, **options)
       provider_override = options.delete(:provider)
-      # model = options.delete(:model) # model is passed through in options if present
       current_provider(provider_override).embed(text: text, **options)
     rescue StandardError => e
-      SynapseAi::Response.new(error: "SynapseAI.embed failed: #{e.message}", status: :error)
+      Response.new(success: false, error_message: e.message, raw_response: e)
     end
   end
 end

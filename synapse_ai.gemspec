@@ -41,8 +41,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "gemini-ai", "~> 4.2.0"
   spec.add_dependency "ruby-openai"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "vcr"
-  spec.add_development_dependency "webmock"
+  spec.add_dependency "tiktoken_ruby", "~> 0.0.6"
+  spec.add_dependency "zeitwerk", "~> 2.6"
+  spec.metadata["rubygems_mfa_required"] = "true"
 end

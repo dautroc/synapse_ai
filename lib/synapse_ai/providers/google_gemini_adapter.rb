@@ -36,7 +36,7 @@ module SynapseAi
       # @param temperature [Float] The temperature for sampling.
       # @param options [Hash] Additional options for the provider.
       # @return [SynapseAi::Response] The standardized response object.
-      def chat(messages:, model: DEFAULT_CHAT_MODEL, temperature: 0.7, **options)
+      def chat(messages:, _model: DEFAULT_CHAT_MODEL, temperature: 0.7, **options)
         # Adapt SynapseAI message format to Gemini format if necessary
         # Gemini expects: { contents: [{ role: 'user', parts: { text: 'Hello!' } }] }
         # or an array for history: { contents: [ {role: 'user', parts: ...}, {role: 'model', parts: ...} ] }
@@ -132,7 +132,8 @@ module SynapseAi
         # For now, assuming the client can use a different model if specified in the method call or
         # we re-initialize a client for embeddings if needed.
         # Let's check if the gem allows model override per call for embeddings.
-        # According to gemini-ai docs, for Generative Language API, it's client.embed_content and model is passed in options.
+        # According to gemini-ai docs, for Generative Language API,
+        # it's client.embed_content and model is passed in options.
 
         embedding_client = Gemini::Client.new(
           credentials: {
@@ -143,14 +144,19 @@ module SynapseAi
         )
 
         raw_response = embedding_client.embed_content(payload)
-        embedding = raw_response.dig("embedding", "values")
+
+        # According to gemini-ai docs, for Generative Language API,
+        # it's client.embed_content and model is passed in options.
+        if raw_response.is_a?(Hash) && raw_response["embedding"]
+          embedding_vector = raw_response.dig("embedding", "values")
+        end
 
         # Token usage for embeddings might not be directly provided or be relevant in the same way.
         # Check Gemini API documentation for how it reports usage for embeddings.
         # For now, we'll leave it nil or use what's available.
 
         SynapseAi::Response.new(
-          content: embedding, # The embedding itself
+          content: embedding_vector, # The embedding itself
           error: nil,
           token_usage: nil, # Placeholder
           raw_response: raw_response,

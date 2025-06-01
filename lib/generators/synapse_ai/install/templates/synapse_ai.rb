@@ -8,8 +8,8 @@ SynapseAi.configure do |config|
   # ==> API Keys
   # Provide API keys for the services you want to use.
   # It's highly recommended to use Rails credentials or environment variables.
-  config.openai_api_key = ENV["OPENAI_API_KEY"]
-  config.google_gemini_api_key = ENV["GOOGLE_GEMINI_API_KEY"]
+  config.openai_api_key = ENV.fetch("OPENAI_API_KEY", nil)
+  config.google_gemini_api_key = ENV.fetch("GOOGLE_GEMINI_API_KEY", nil)
 
   # ==> Logging
   # Set the log level for SynapseAI operations. Options: :debug, :info, :warn, :error, :fatal

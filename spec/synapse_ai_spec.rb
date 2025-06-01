@@ -78,7 +78,7 @@ RSpec.describe SynapseAi do
   describe ".chat" do
     let(:mock_provider) { instance_double(SynapseAi::Providers::OpenAIAdapter) }
     let(:messages) { [{ role: "user", content: "Hi" }] }
-    let(:expected_response) { SynapseAi::Response.new(content: "Hello there", status: :success) }
+    let(:expected_response) { SynapseAi::Response.new(success: true, content: "Hello there") }
 
     before do
       SynapseAi.instance_variable_set(:@configuration, nil)
@@ -105,14 +105,14 @@ RSpec.describe SynapseAi do
       allow(mock_provider).to receive(:chat).and_raise(StandardError, "Something went wrong")
       response = SynapseAi.chat(messages: messages)
       expect(response).to be_failure
-      expect(response.error).to eq("SynapseAI.chat failed: Something went wrong")
+      expect(response.error_message).to eq("Something went wrong")
     end
   end
 
   describe ".generate_text" do
     let(:mock_provider) { instance_double(SynapseAi::Providers::OpenAIAdapter) }
     let(:prompt) { "Summarize this" }
-    let(:expected_response) { SynapseAi::Response.new(content: "Summary.", status: :success) }
+    let(:expected_response) { SynapseAi::Response.new(success: true, content: "Summary.") }
 
     before do
       SynapseAi.instance_variable_set(:@configuration, nil)
@@ -131,7 +131,7 @@ RSpec.describe SynapseAi do
       allow(mock_provider).to receive(:generate_text).and_raise(StandardError, "Text gen went wrong")
       response = SynapseAi.generate_text(prompt: prompt)
       expect(response).to be_failure
-      expect(response.error).to eq("SynapseAI.generate_text failed: Text gen went wrong")
+      expect(response.error_message).to eq("Text gen went wrong")
     end
   end
 
@@ -139,7 +139,7 @@ RSpec.describe SynapseAi do
     let(:mock_provider) { instance_double(SynapseAi::Providers::OpenAIAdapter) }
     let(:text_to_embed) { "Embed this!" }
     let(:embedding_vector) { [0.1, 0.2, 0.3] }
-    let(:expected_response) { SynapseAi::Response.new(content: embedding_vector, status: :success) }
+    let(:expected_response) { SynapseAi::Response.new(success: true, content: embedding_vector) }
 
     before do
       SynapseAi.instance_variable_set(:@configuration, nil) # Reset config
@@ -159,7 +159,7 @@ RSpec.describe SynapseAi do
       allow(mock_provider).to receive(:embed).and_raise(StandardError, "Embedding went wrong")
       response = SynapseAi.embed(text: text_to_embed)
       expect(response).to be_failure
-      expect(response.error).to eq("SynapseAI.embed failed: Embedding went wrong")
+      expect(response.error_message).to eq("Embedding went wrong")
     end
   end
 end
