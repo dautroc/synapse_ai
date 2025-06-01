@@ -1,38 +1,115 @@
-# SynapseAi
+# SynapseAI: Rails-Native AI Integration Layer
 
-TODO: Delete this and the text below, and describe your gem
+SynapseAI provides a seamless and "Rails-way" approach to integrating various AI functionalities into Ruby on Rails applications. It abstracts the complexities of different AI provider APIs (starting with OpenAI) and offers a consistent developer experience.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/synapse_ai`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Vision
+
+Mission: To provide a seamless and "Rails-way" approach to integrating various AI functionalities into Ruby on Rails applications, abstracting complexities of different AI provider APIs and offering a consistent developer experience.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add this line to your application's Gemfile:
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem 'synapse_ai'
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+Or install it yourself as:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+$ gem install synapse_ai # (If published and you want to install system-wide)
 ```
 
-## Usage
+## Configuration
 
-TODO: Write usage instructions here
+Create an initializer file in your Rails application, for example `config/initializers/synapse_ai.rb`:
+
+```ruby
+# config/initializers/synapse_ai.rb
+SynapseAi.configure do |config|
+  # Default provider is :openai
+  # config.provider = :openai 
+
+  config.openai_api_key = ENV['OPENAI_API_KEY']
+  
+  # For future providers:
+  # config.google_api_key = ENV['GOOGLE_API_KEY']
+  
+  config.log_level = :info # Or :debug for more verbose logging from the gem
+  config.default_timeout = 60 # Seconds for API calls
+end
+```
+
+Make sure you have `OPENAI_API_KEY` (and other keys for future providers) set in your application's environment (e.g., using `dotenv-rails`, Rails credentials, or your hosting provider's environment variable settings).
+
+## Usage Example
+
+Here's how you might use SynapseAI within a Rails model to generate a summary for an article:
+
+```ruby
+# app/models/article.rb
+class Article < ApplicationRecord
+  # Assuming 'content' is an attribute of Article
+  # and you want to store the summary in 'summary' (add this column if it doesn't exist)
+
+  def generate_summary_with_synapse
+    prompt_text = "Summarize the following text concisely, in no more than 3 sentences:\n\n#{self.content}"
+
+    # Ensure SynapseAi is configured (e.g., via an initializer as shown above)
+    response = SynapseAi.generate_text(
+      prompt: prompt_text,
+      model: "gpt-3.5-turbo", # Or your preferred model
+      max_tokens: 100         # Adjust as needed
+    )
+
+    if response.success?
+      self.summary = response.content.strip
+      # self.save # Uncomment if you want to save immediately
+      true
+    else
+      Rails.logger.error "SynapseAI Error generating summary for Article ##{id}: #{response.error}"
+      self.summary = "Could not generate summary at this time."
+      false
+    end
+  rescue StandardError => e
+    Rails.logger.error "SynapseAI: Unexpected error during summary generation for Article ##{id}: #{e.message}"
+    self.summary = "Could not generate summary due to an unexpected issue."
+    false
+  end
+end
+```
+
+Then in your controller or console:
+
+```ruby
+article = Article.find(your_article_id)
+if article.generate_summary_with_synapse
+  article.save
+  puts "Summary generated: #{article.summary}"
+else
+  puts "Failed to generate summary."
+end
+```
+
+## Implemented Features (Phase 1)
+
+*   Configuration layer for API keys and defaults.
+*   Standardized `SynapseAi::Response` object.
+*   OpenAI Provider Integration:
+    *   `SynapseAi.chat(messages:, **options)`
+    *   `SynapseAi.generate_text(prompt:, **options)`
+*   Basic Railtie for Rails integration.
+*   RSpec tests with VCR for the OpenAI adapter and core module.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` or `bundle exec rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/synapse_ai. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/synapse_ai/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at [https://github.com/dautroc/synapse_ai](https://github.com/dautroc/synapse_ai). This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the project's code of conduct.
 
 ## License
 
@@ -40,4 +117,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the SynapseAi project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/synapse_ai/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the SynapseAI project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
