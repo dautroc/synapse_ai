@@ -31,10 +31,11 @@ module SynapseAi
          (SynapseAi.configuration.openai_api_key.nil? || SynapseAi.configuration.openai_api_key.empty?)
         Rails.logger.warn "[SynapseAI] OpenAI provider is selected, but OPENAI_API_KEY is not configured. SynapseAI may not function correctly."
       end
-      # Add checks for other providers as they are implemented
-      # if SynapseAi.configuration.provider == :google && SynapseAi.configuration.google_api_key.blank?
-      #   Rails.logger.warn "[SynapseAI] Google provider is selected, but GOOGLE_API_KEY is not configured."
-      # end
+
+      if SynapseAi.configuration.provider == :google_gemini &&
+         (SynapseAi.configuration.google_gemini_api_key.nil? || SynapseAi.configuration.google_gemini_api_key.empty?)
+        Rails.logger.warn "[SynapseAI] Google Gemini provider is selected, but GOOGLE_GEMINI_API_KEY is not configured. SynapseAI may not function correctly."
+      end
     end
 
     # You could also add generators or rake tasks here if needed

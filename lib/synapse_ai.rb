@@ -5,6 +5,7 @@ require_relative "synapse_ai/configuration"
 require_relative "synapse_ai/response"
 require_relative "synapse_ai/providers/base"
 require_relative "synapse_ai/providers/openai_adapter"
+require_relative "synapse_ai/providers/google_gemini_adapter"
 # Add other providers here as they are created, e.g.:
 # require_relative "synapse_ai/providers/google_adapter"
 
@@ -27,16 +28,16 @@ module SynapseAi
 
       case provider_name.to_sym
       when :openai
-        api_key = configuration.openai_api_key
-        Providers::OpenAIAdapter.new(api_key: api_key)
-        # when :google
-        # api_key = configuration.google_api_key
-        # Providers::GoogleAdapter.new(api_key: api_key) # Example for future
+        Providers::OpenAIAdapter.new(api_key: configuration.openai_api_key)
+      when :google_gemini
+        Providers::GoogleGeminiAdapter.new
       else
         raise ConfigurationError, "Unsupported AI provider: #{provider_name}"
       end
-    rescue ArgumentError => e # Catches API key missing from adapter constructor
+    rescue ArgumentError => e # Catches API key missing from adapter constructor if one is explicitly required
       raise ConfigurationError, e.message
+    rescue SynapseAi::ConfigurationError => e # Corrected: Catch our own config errors from adapter init
+      raise e # Re-raise
     end
 
     # Generates a chat completion using the configured AI provider.

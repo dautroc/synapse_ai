@@ -56,6 +56,15 @@ RSpec.describe SynapseAi do
       end
     end
 
+    context "when an unsupported provider is configured" do
+      it "raises a ConfigurationError" do
+        SynapseAi.configure { |c| c.provider = :unsupported_foo_provider }
+        expect do
+          SynapseAi.current_provider
+        end.to raise_error(SynapseAi::ConfigurationError, /Unsupported AI provider: unsupported_foo_provider/)
+      end
+    end
+
     context "when API key is not configured for the selected provider" do
       it "raises a ConfigurationError because the adapter raises ArgumentError" do
         SynapseAi.configure { |c| c.openai_api_key = nil } # Explicitly set to nil

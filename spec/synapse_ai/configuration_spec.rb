@@ -7,17 +7,17 @@ RSpec.describe SynapseAi::Configuration do
     # Preserve original ENV values around tests that modify them
     around do |example|
       original_openai_key = ENV["OPENAI_API_KEY"]
-      original_google_key = ENV["GOOGLE_API_KEY"]
+      original_google_gemini_key = ENV["GOOGLE_GEMINI_API_KEY"]
       example.run
     ensure
       ENV["OPENAI_API_KEY"] = original_openai_key
-      ENV["GOOGLE_API_KEY"] = original_google_key
+      ENV["GOOGLE_GEMINI_API_KEY"] = original_google_gemini_key
     end
 
     context "when environment variables are NOT set for the test" do
       before do
         ENV.delete("OPENAI_API_KEY")
-        ENV.delete("GOOGLE_API_KEY")
+        ENV.delete("GOOGLE_GEMINI_API_KEY")
       end
 
       subject(:config) { described_class.new }
@@ -30,8 +30,8 @@ RSpec.describe SynapseAi::Configuration do
         expect(config.openai_api_key).to be_nil
       end
 
-      it "defaults google_api_key to nil" do
-        expect(config.google_api_key).to be_nil
+      it "defaults google_gemini_api_key to nil" do
+        expect(config.google_gemini_api_key).to be_nil
       end
 
       it "defaults log_level to :info" do
@@ -45,11 +45,11 @@ RSpec.describe SynapseAi::Configuration do
 
     context "when environment variables ARE set for the test" do
       let(:fake_openai_key) { "sk-env-openai-key-for-test" }
-      let(:fake_google_key) { "env-google-key-for-test" }
+      let(:fake_google_gemini_key) { "env-google-gemini-key-for-test" }
 
       before do
         ENV["OPENAI_API_KEY"] = fake_openai_key
-        ENV["GOOGLE_API_KEY"] = fake_google_key
+        ENV["GOOGLE_GEMINI_API_KEY"] = fake_google_gemini_key
       end
 
       subject(:config) { described_class.new }
@@ -58,8 +58,8 @@ RSpec.describe SynapseAi::Configuration do
         expect(config.openai_api_key).to eq(fake_openai_key)
       end
 
-      it "uses ENV for google_api_key if set" do
-        expect(config.google_api_key).to eq(fake_google_key)
+      it "uses ENV for google_gemini_api_key if set" do
+        expect(config.google_gemini_api_key).to eq(fake_google_gemini_key)
       end
     end
   end
