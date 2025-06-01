@@ -26,7 +26,7 @@ module SynapseAi
         )
       rescue Gemini::Errors::GeminiError => e
         # Catch client initialization errors and wrap them
-        raise SynapseAi::Errors::ConfigurationError, "Failed to initialize Google Gemini client: #{e.message}"
+        raise SynapseAi::ConfigurationError, "Failed to initialize Google Gemini client: #{e.message}"
       end
 
       # Performs a chat completion.
@@ -71,29 +71,26 @@ module SynapseAi
         total_tokens = raw_response.dig("usageMetadata", "totalTokenCount")
 
         SynapseAi::Response.new(
+          success: true,
           content: content,
-          error: nil,
           token_usage: {
             prompt_tokens: prompt_tokens,
             completion_tokens: completion_tokens,
             total_tokens: total_tokens
           },
-          raw_response: raw_response,
-          status: :success
+          raw_response: raw_response
         )
       rescue Gemini::Errors::RequestError => e
         SynapseAi::Response.new(
-          content: nil,
-          error: { type: e.class.name, message: e.message },
-          raw_response: e.response, # The gem might store the response in the error object
-          status: :error
+          success: false,
+          error_message: e.message,
+          raw_response: e.response # The gem might store the response in the error object
         )
       rescue StandardError => e
         SynapseAi::Response.new(
-          content: nil,
-          error: { type: e.class.name, message: e.message },
-          raw_response: nil,
-          status: :error
+          success: false,
+          error_message: e.message,
+          raw_response: nil
         )
       end
 
@@ -156,25 +153,22 @@ module SynapseAi
         # For now, we'll leave it nil or use what's available.
 
         SynapseAi::Response.new(
+          success: true,
           content: embedding_vector, # The embedding itself
-          error: nil,
-          token_usage: nil, # Placeholder
           raw_response: raw_response,
-          status: :success
+          token_usage: nil # Placeholder
         )
       rescue Gemini::Errors::RequestError => e
         SynapseAi::Response.new(
-          content: nil,
-          error: { type: e.class.name, message: e.message },
-          raw_response: e.response,
-          status: :error
+          success: false,
+          error_message: e.message,
+          raw_response: e.response
         )
       rescue StandardError => e
         SynapseAi::Response.new(
-          content: nil,
-          error: { type: e.class.name, message: e.message },
-          raw_response: nil,
-          status: :error
+          success: false,
+          error_message: e.message,
+          raw_response: nil
         )
       end
     end
