@@ -17,12 +17,18 @@ gem 'synapse_ai'
 Or install it yourself as:
 
 ```bash
-$ gem install synapse_ai # (If published and you want to install system-wide)
+$ bundle install
 ```
 
 ## Configuration
 
-Create an initializer file in your Rails application, for example `config/initializers/synapse_ai.rb`:
+After bundling the gem, you can run the install generator to create an initializer file:
+
+```bash
+$ rails generate synapse_ai:install
+```
+
+This will create `config/initializers/synapse_ai.rb`. Open this file to configure your API keys and other settings:
 
 ```ruby
 # config/initializers/synapse_ai.rb
