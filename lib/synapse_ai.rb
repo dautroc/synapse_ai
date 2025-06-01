@@ -8,6 +8,8 @@ require_relative "synapse_ai/providers/openai_adapter"
 # Add other providers here as they are created, e.g.:
 # require_relative "synapse_ai/providers/google_adapter"
 
+require_relative "synapse_ai/railtie" if defined?(Rails::Railtie)
+
 module SynapseAi
   class Error < StandardError; end
   class ConfigurationError < Error; end
