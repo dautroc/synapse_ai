@@ -14,12 +14,6 @@ Add this line to your application's Gemfile:
 gem 'synapse_ai'
 ```
 
-Or install it yourself as:
-
-```bash
-$ bundle install
-```
-
 ## Configuration
 
 After bundling the gem, you can run the install generator to create an initializer file:
@@ -97,14 +91,42 @@ else
 end
 ```
 
-## Implemented Features (Phase 1)
+### Generating Embeddings
+
+Embeddings convert text into numerical vectors, which are useful for semantic search, clustering, and other machine learning tasks.
+
+```ruby
+text_to_embed = "SynapseAI makes AI integration easy."
+
+# Default model for OpenAI is text-embedding-3-small
+response = SynapseAi.embed(text: text_to_embed)
+
+if response.success?
+  embedding_vector = response.content
+  puts "Generated embedding vector (first 5 dimensions): #{embedding_vector.take(5)}..."
+  puts "Total dimensions: #{embedding_vector.size}"
+  # You can now store this vector in a vector database (e.g., pgvector, Pinecone, Weaviate)
+  # or use it for similarity calculations.
+else
+  puts "Failed to generate embedding: #{response.error}"
+end
+
+# You can also specify a model (if supported by the provider):
+# response_ada = SynapseAi.embed(text: text_to_embed, model: "text-embedding-ada-002")
+# if response_ada.success?
+#   puts "ADA-002 embedding (first 5): #{response_ada.content.take(5)}..."
+# end
+```
+
+## Implemented Features (Phase 1 & early Phase 2)
 
 *   Configuration layer for API keys and defaults.
 *   Standardized `SynapseAi::Response` object.
 *   OpenAI Provider Integration:
     *   `SynapseAi.chat(messages:, **options)`
     *   `SynapseAi.generate_text(prompt:, **options)`
-*   Basic Railtie for Rails integration.
+    *   `SynapseAi.embed(text:, **options)`
+*   Basic Railtie for Rails integration with initializer generator (`rails g synapse_ai:install`).
 *   RSpec tests with VCR for the OpenAI adapter and core module.
 
 ## Development
