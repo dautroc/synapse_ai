@@ -109,6 +109,48 @@ module SynapseAi
           end
         end
       end
+
+      # Generates embeddings for a given text using the OpenAI API.
+      #
+      # @param text [String] The text to generate embeddings for.
+      # @param model [String] The model to use for embeddings. Defaults to "text-embedding-3-small".
+      # @param options [Hash] Additional options to pass to the OpenAI client.
+      # @return [SynapseAi::Response] A standardized response object. The content will be the embedding vector (Array<Float>).
+      def embed(text:, model: "text-embedding-3-small", **options)
+        raw_response = client.embeddings(
+          parameters: {
+            input: text,
+            model: model
+          }.merge(options)
+        )
+
+        if raw_response.key?("data") && raw_response["data"].any? && raw_response["data"][0].key?("embedding")
+          embedding_vector = raw_response.dig("data", 0, "embedding")
+          token_usage = raw_response.dig("usage") || {}
+          SynapseAi::Response.new(
+            content: embedding_vector,
+            token_usage: token_usage,
+            raw_response: raw_response,
+            status: :success
+          )
+        elsif raw_response.key?("error")
+          SynapseAi::Response.new(
+            error: raw_response["error"]["message"],
+            raw_response: raw_response,
+            status: :error
+          )
+        else
+          SynapseAi::Response.new(
+            error: "Unknown error or malformed embedding response from OpenAI.",
+            raw_response: raw_response,
+            status: :error
+          )
+        end
+      rescue ::OpenAI::Error => e
+        SynapseAi::Response.new(error: e.message, raw_response: e.response, status: :error)
+      rescue StandardError => e
+        SynapseAi::Response.new(error: "SynapseAI client error in embed: #{e.message}", status: :error)
+      end
     end
   end
 end

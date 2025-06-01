@@ -1,0 +1,67 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/embeddings
+    body:
+      encoding: UTF-8
+      string: '{"input":"This is a test sentence for embeddings.","model":"text-embedding-3-small"}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer sk-invalidkey123
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Date:
+      - Sun, 01 Jun 2025 10:01:05 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '266'
+      Connection:
+      - keep-alive
+      Vary:
+      - Origin
+      X-Request-Id:
+      - req_d8a148b78f899f01908c4b5101115ded
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=nPNYgn5N2VN5o7UMWX3j6RSO7_o56ElZnKOw3i89aEk-1748772065-1.0.1.1-17ys5aGcl_RB0BRCQmaOjgA9WIoBJtIjvXkx_Jx8dTSs9d1D1QOLCvUX_AcnTDqJGuNPZKbN94_qSNcW2yT3M5w62vuYZM0WwbGs60dCHio;
+        path=/; expires=Sun, 01-Jun-25 10:31:05 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=zj7IYLW7UNF6a2WTAgc8vDyKIAzNy3XnxMtvTYM9sDA-1748772065727-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 948dde1e39ba1073-HKG
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |
+        {
+            "error": {
+                "message": "Incorrect API key provided: sk-inval****y123. You can find your API key at https://platform.openai.com/account/api-keys.",
+                "type": "invalid_request_error",
+                "param": null,
+                "code": "invalid_api_key"
+            }
+        }
+  recorded_at: Sun, 01 Jun 2025 10:01:05 GMT
+recorded_with: VCR 6.3.1

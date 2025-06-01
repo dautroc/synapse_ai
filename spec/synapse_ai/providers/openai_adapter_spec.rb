@@ -77,6 +77,41 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
     # end
   end
 
-  # TODO: Add tests for other methods like #embed, #generate_image when implemented
+  describe "#embed", :vcr do
+    subject(:adapter) { described_class.new(api_key: api_key) }
+    let(:text_to_embed) { "This is a test sentence for embeddings." }
+
+    context "with valid parameters" do
+      it "returns a successful response with an embedding vector and token usage" do
+        response = adapter.embed(text: text_to_embed)
+        expect(response).to be_a(SynapseAi::Response)
+        expect(response).to be_success
+        expect(response.content).to be_an(Array)
+        expect(response.content.first).to be_a(Float)
+        expect(response.content.size).to be > 100 # OpenAI embeddings are large, e.g., 1536 for ada-002 or 3-small
+        expect(response.token_usage).to include("prompt_tokens", "total_tokens")
+      end
+
+      it "allows specifying a different model", vcr: { cassette_name: "openai_embed_custom_model" } do
+        # NOTE: text-embedding-ada-002 is an older but valid model for testing against.
+        # Ensure your VCR cassette reflects a call to this model if you run this.
+        response = adapter.embed(text: text_to_embed, model: "text-embedding-ada-002")
+        expect(response).to be_success
+        expect(response.content).to be_an(Array)
+        expect(response.raw_response["model"]).to match(/ada-002/)
+      end
+    end
+
+    context "with an invalid API key (simulated by VCR)" do
+      it "returns an error response", vcr: { cassette_name: "openai_embed_failure_invalid_key" } do
+        bad_key_adapter = described_class.new(api_key: "sk-invalidkey123")
+        response = bad_key_adapter.embed(text: text_to_embed)
+        expect(response).to be_failure
+        expect(response.error).to match(/Incorrect API key provided|Invalid API key|server responded with status 401/i)
+      end
+    end
+  end
+
+  # TODO: Add tests for other methods like #generate_image when implemented
   # TODO: Add tests for specific error types (network errors, rate limits, etc.)
 end

@@ -64,5 +64,20 @@ module SynapseAi
     rescue StandardError => e
       SynapseAi::Response.new(error: "SynapseAI.generate_text failed: #{e.message}", status: :error)
     end
+
+    # Generates an embedding for the given text using the configured AI provider.
+    #
+    # @param text [String] The text to embed.
+    # @param options [Hash] Provider-specific options.
+    # @option options [String] :model The specific embedding model to use.
+    # @option options [Symbol, String] :provider Override the default provider for this call.
+    # @return [SynapseAi::Response] A standardized response object containing the embedding vector.
+    def embed(text:, **options)
+      provider_override = options.delete(:provider)
+      # model = options.delete(:model) # model is passed through in options if present
+      current_provider(provider_override).embed(text: text, **options)
+    rescue StandardError => e
+      SynapseAi::Response.new(error: "SynapseAI.embed failed: #{e.message}", status: :error)
+    end
   end
 end
