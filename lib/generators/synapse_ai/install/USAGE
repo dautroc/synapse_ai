@@ -1,0 +1,9 @@
+Description:
+    This generator creates the SynapseAI initializer file at config/initializers/synapse_ai.rb.
+
+Example:
+    rails generate synapse_ai:install
+
+This will create a file where you can configure your API keys and other SynapseAI settings.
+Make sure to set your API keys (e.g., ENV['OPENAI_API_KEY']) in your application's
+environment or Rails credentials. 

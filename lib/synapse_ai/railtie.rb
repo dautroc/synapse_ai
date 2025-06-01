@@ -26,9 +26,20 @@ module SynapseAi
     #   # end
     # end
 
+    config.after_initialize do
+      if SynapseAi.configuration.provider == :openai &&
+         (SynapseAi.configuration.openai_api_key.nil? || SynapseAi.configuration.openai_api_key.empty?)
+        Rails.logger.warn "[SynapseAI] OpenAI provider is selected, but OPENAI_API_KEY is not configured. SynapseAI may not function correctly."
+      end
+      # Add checks for other providers as they are implemented
+      # if SynapseAi.configuration.provider == :google && SynapseAi.configuration.google_api_key.blank?
+      #   Rails.logger.warn "[SynapseAI] Google provider is selected, but GOOGLE_API_KEY is not configured."
+      # end
+    end
+
     # You could also add generators or rake tasks here if needed
-    # generators do
-    #   require_relative "generators/install_generator"
-    # end
+    generators do
+      require_relative "../generators/synapse_ai/install/install_generator" # Adjusted path
+    end
   end
 end
