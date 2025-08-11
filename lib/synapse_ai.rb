@@ -5,9 +5,7 @@ require_relative "synapse_ai/configuration"
 require_relative "synapse_ai/response"
 require_relative "synapse_ai/providers/base"
 require_relative "synapse_ai/providers/openai_adapter"
-require_relative "synapse_ai/providers/google_gemini_adapter"
-# Add other providers here as they are created, e.g.:
-# require_relative "synapse_ai/providers/google_adapter"
+# Only OpenAI provider is supported
 
 require_relative "synapse_ai/railtie" if defined?(Rails::Railtie)
 require "zeitwerk"
@@ -41,12 +39,9 @@ module SynapseAi
 
       case provider_key
       when :openai
-        api_key_to_use = configuration.openai_api_key
-        Providers::OpenAIAdapter.new(api_key: api_key_to_use)
-      when :google_gemini
-        raise ConfigurationError, "Google Gemini provider not yet fully implemented."
+        Providers::OpenAIAdapter.new(api_key: configuration.openai_api_key)
       else
-        raise ConfigurationError, "Unsupported AI provider: #{provider_key}"
+        raise ConfigurationError, "Unsupported AI provider: #{provider_key}. Only :openai is supported."
       end
     rescue ArgumentError => e # Catches API key missing from adapter constructor
       raise ConfigurationError, "API key not configured for #{provider_key}: #{e.message}"

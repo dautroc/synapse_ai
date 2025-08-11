@@ -13,7 +13,7 @@ module SynapseAi
     #
     #   SynapseAi.configure do |config|
     #     config.openai_api_key = ENV["OPENAI_API_KEY"]
-    #     # config.provider = :google # if you want to change default
+    #     # config.provider = :openai
     #     # config.log_level = :debug
     #   end
     config.before_configuration do
@@ -33,12 +33,6 @@ module SynapseAi
       if SynapseAi.configuration.provider == :openai && SynapseAi.configuration.openai_api_key.nil?
         Rails.logger.warn "[SynapseAI] OpenAI provider selected, but OPENAI_API_KEY is not set. " \
                           "SynapseAI may not function correctly."
-      end
-
-      if SynapseAi.configuration.provider == :google_gemini &&
-         (SynapseAi.configuration.google_gemini_api_key.nil? || SynapseAi.configuration.google_gemini_api_key.empty?)
-        Rails.logger.warn "[SynapseAI] Google Gemini provider selected, but GOOGLE_GEMINI_API_KEY " \
-                          "is not configured. SynapseAI may not function correctly."
       end
     end
 

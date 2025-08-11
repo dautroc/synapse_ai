@@ -12,6 +12,7 @@ group :development, :test do
   gem "rubocop", "~> 1.21"
   gem "vcr"
   gem "webmock"
+  gem "byebug"
 end
 
 gem "tiktoken_ruby", "~> 0.0.6"

@@ -47,12 +47,14 @@ RSpec.describe SynapseAi do
       end
     end
 
-    context "when a different provider is configured (but not yet implemented)" do
-      it "raises a ConfigurationError" do
+    
+
+    context "when a different provider is configured" do
+      it "raises a ConfigurationError mentioning only openai is supported" do
         SynapseAi.configure { |c| c.provider = :google }
         expect do
           SynapseAi.current_provider
-        end.to raise_error(SynapseAi::ConfigurationError, /Unsupported AI provider: google/)
+        end.to raise_error(SynapseAi::ConfigurationError, /Only :openai is supported/)
       end
     end
 

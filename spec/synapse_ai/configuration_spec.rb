@@ -7,17 +7,14 @@ RSpec.describe SynapseAi::Configuration do
     # Preserve original ENV values around tests that modify them
     around do |example|
       original_openai_key = ENV.fetch("OPENAI_API_KEY", nil)
-      original_google_gemini_key = ENV.fetch("GOOGLE_GEMINI_API_KEY", nil)
       example.run
     ensure
       ENV["OPENAI_API_KEY"] = original_openai_key
-      ENV["GOOGLE_GEMINI_API_KEY"] = original_google_gemini_key
     end
 
     context "when environment variables are NOT set for the test" do
       before do
         ENV.delete("OPENAI_API_KEY")
-        ENV.delete("GOOGLE_GEMINI_API_KEY")
       end
 
       subject(:config) { described_class.new }
@@ -30,9 +27,7 @@ RSpec.describe SynapseAi::Configuration do
         expect(config.openai_api_key).to be_nil
       end
 
-      it "defaults google_gemini_api_key to nil" do
-        expect(config.google_gemini_api_key).to be_nil
-      end
+      
 
       it "defaults log_level to :info" do
         expect(config.log_level).to eq(:info)
@@ -46,13 +41,10 @@ RSpec.describe SynapseAi::Configuration do
     context "when environment variables ARE set for the test" do
       around do |example|
         original_openai_key = ENV.fetch("OPENAI_API_KEY", nil)
-        original_google_gemini_key = ENV.fetch("GOOGLE_GEMINI_API_KEY", nil)
         ENV["OPENAI_API_KEY"] = "env_openai_key"
-        ENV["GOOGLE_GEMINI_API_KEY"] = "env_google_key"
         example.run
       ensure
         ENV["OPENAI_API_KEY"] = original_openai_key
-        ENV["GOOGLE_GEMINI_API_KEY"] = original_google_gemini_key
       end
 
       subject(:config) { described_class.new }
@@ -61,9 +53,7 @@ RSpec.describe SynapseAi::Configuration do
         expect(config.openai_api_key).to eq("env_openai_key")
       end
 
-      it "uses ENV for google_gemini_api_key if set" do
-        expect(config.google_gemini_api_key).to eq("env_google_key")
-      end
+      
     end
   end
 end

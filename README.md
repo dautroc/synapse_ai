@@ -22,25 +22,22 @@ After bundling the gem, you can run the install generator to create an initializ
 $ rails generate synapse_ai:install
 ```
 
-This will create `config/initializers/synapse_ai.rb`. Open this file to configure your API keys and other settings:
+This will create `config/initializers/synapse_ai.rb`. Open this file to configure your API keys and other settings (OpenAI only):
 
 ```ruby
 # config/initializers/synapse_ai.rb
 SynapseAi.configure do |config|
-  # Default provider is :openai
-  # config.provider = :openai 
+  # Default and only supported provider is :openai
+  # config.provider = :openai
 
   config.openai_api_key = ENV['OPENAI_API_KEY']
-  
-  # For future providers:
-  # config.google_api_key = ENV['GOOGLE_API_KEY']
   
   config.log_level = :info # Or :debug for more verbose logging from the gem
   config.default_timeout = 60 # Seconds for API calls
 end
 ```
 
-Make sure you have `OPENAI_API_KEY` (and other keys for future providers) set in your application's environment (e.g., using `dotenv-rails`, Rails credentials, or your hosting provider's environment variable settings).
+Make sure you have `OPENAI_API_KEY` set in your application's environment (e.g., using `dotenv-rails`, Rails credentials, or your hosting provider's environment variable settings).
 
 ## Usage Example
 
