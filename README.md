@@ -6,12 +6,25 @@ SynapseAI provides a seamless and "Rails-way" approach to integrating various AI
 
 Mission: To provide a seamless and "Rails-way" approach to integrating various AI functionalities into Ruby on Rails applications, abstracting complexities of different AI provider APIs and offering a consistent developer experience.
 
-## Installation
+## Requirements
 
-Add this line to your application's Gemfile:
+- Ruby >= 3.1
+- Bundler >= 2
+
+## Installation (private)
+
+Add one of the following to your application's Gemfile:
+
+Git (recommended):
 
 ```ruby
-gem 'synapse_ai'
+gem 'synapse_ai', git: 'https://github.com/dautroc/synapse_ai', branch: 'main'
+```
+
+Local path (for local development):
+
+```ruby
+gem 'synapse_ai', path: '../synapse_ai'
 ```
 
 ## Configuration
@@ -37,7 +50,7 @@ SynapseAi.configure do |config|
 end
 ```
 
-Make sure you have `OPENAI_API_KEY` set in your application's environment (e.g., using `dotenv-rails`, Rails credentials, or your hosting provider's environment variable settings).
+Make sure you have `OPENAI_API_KEY` set in your application's environment (e.g., using `dotenv-rails`, Rails credentials, or your hosting provider's environment variable settings). Only OpenAI is supported.
 
 ## Usage Example
 
@@ -128,18 +141,10 @@ end
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` or `bundle exec rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Use Ruby 3.3.x (or >= 3.1) and Bundler 2.6.x. After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. 
+To build and install locally into your gemset, run:
 
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at [https://github.com/dautroc/synapse_ai](https://github.com/dautroc/synapse_ai). This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the project's code of conduct.
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the SynapseAI project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
+```bash
+bundle exec rake install
+```

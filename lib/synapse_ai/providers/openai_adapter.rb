@@ -165,7 +165,6 @@ module SynapseAi
           raw_response: raw_response,
           token_usage: {
             prompt_tokens: token_usage["prompt_tokens"],
-            # Embeddings API doesn't return completion_tokens
             total_tokens: token_usage["total_tokens"]
           }
         )
@@ -177,7 +176,7 @@ module SynapseAi
         "gpt-4-turbo-preview",
         "gpt-4-0125-preview",
         "gpt-4-1106-preview",
-        "gpt-4-vision-preview", # Added for completeness, though vision may need special handling
+        "gpt-4-vision-preview",
         "gpt-3.5-turbo",
         "gpt-3.5-turbo-0125",
         "gpt-3.5-turbo-1106"
