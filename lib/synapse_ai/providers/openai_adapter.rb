@@ -105,42 +105,6 @@ module SynapseAi
         )
       end
 
-      def embed(text:, model: "text-embedding-3-small", **options)
-        embedding_vector = nil
-        error_message = nil
-        raw_response = nil
-        token_usage = {}
-
-        begin
-          parameters = { model: model, input: text }.merge(options)
-          raw_response = client.embeddings(parameters: parameters)
-
-          if raw_response["data"] && raw_response["data"].first["embedding"]
-            embedding_vector = raw_response["data"].first["embedding"]
-            token_usage = raw_response["usage"] || {} # Corrected
-          else
-            error_message = "No embedding in OpenAI response: #{raw_response}"
-          end
-        rescue OpenAI::Error => e
-          error_message = "OpenAI API Error: #{e.message}"
-          raw_response = e.response if e.respond_to?(:response)
-        rescue StandardError => e
-          error_message = "StandardError during OpenAI embed: #{e.message}"
-          raw_response = e
-        end
-
-        SynapseAi::Response.new(
-          success: error_message.nil?,
-          content: embedding_vector,
-          error_message: error_message,
-          raw_response: raw_response,
-          token_usage: {
-            prompt_tokens: token_usage["prompt_tokens"],
-            total_tokens: token_usage["total_tokens"]
-          }
-        )
-      end
-
       CHAT_MODELS = [
         "gpt-4",
         "gpt-4-turbo",

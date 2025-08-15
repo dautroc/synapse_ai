@@ -15,9 +15,6 @@ module SynapseAi
         raise NotImplementedError, "#{self.class.name} must implement #generate_image"
       end
 
-      def embed(text:, model: nil, **options)
-        raise NotImplementedError, "#{self.class.name} must implement #embed"
-      end
     end
   end
 end

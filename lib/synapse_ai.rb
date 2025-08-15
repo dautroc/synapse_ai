@@ -55,11 +55,5 @@ module SynapseAi
       Response.new(success: false, error_message: e.message, raw_response: e)
     end
 
-    def embed(text:, **options)
-      provider_override = options.delete(:provider)
-      current_provider(provider_override).embed(text: text, **options)
-    rescue StandardError => e
-      Response.new(success: false, error_message: e.message, raw_response: e)
-    end
   end
 end
