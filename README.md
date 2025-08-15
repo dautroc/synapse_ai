@@ -44,7 +44,7 @@ SynapseAi.configure do |config|
   # config.provider = :openai
 
   config.openai_api_key = ENV['OPENAI_API_KEY']
-  
+
   config.log_level = :info # Or :debug for more verbose logging from the gem
   config.default_timeout = 60 # Seconds for API calls
 end

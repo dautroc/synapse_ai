@@ -66,15 +66,6 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
         expect(response.token_usage).to include(:prompt_tokens, :completion_tokens, :total_tokens)
       end
     end
-
-    # Example for testing a legacy completion model if ever needed
-    # context "with a legacy completion model", vcr: { cassette_name: 'openai_generate_text_legacy' } do
-    #   it "returns a successful response using the completions endpoint"
-    #     response = adapter.generate_text(prompt: "Once upon a time", model: "text-ada-001", max_tokens: 5)
-    #     expect(response).to be_success
-    #     expect(response.content).not_to be_empty
-    #   end
-    # end
   end
 
   describe "#embed", :vcr do
@@ -93,8 +84,6 @@ RSpec.describe SynapseAi::Providers::OpenAIAdapter, :vcr do
       end
 
       it "allows specifying a different model", vcr: { cassette_name: "openai_embed_custom_model" } do
-        # NOTE: text-embedding-ada-002 is an older but valid model for testing against.
-        # Ensure your VCR cassette reflects a call to this model if you run this.
         response = adapter.embed(text: text_to_embed, model: "text-embedding-ada-002")
         expect(response).to be_success
         expect(response.content).to be_an(Array)

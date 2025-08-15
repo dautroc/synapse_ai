@@ -22,7 +22,6 @@ RSpec.describe SynapseAi do
       expect(SynapseAi.configuration.openai_api_key).to eq("test_key")
       expect(SynapseAi.configuration.log_level).to eq(:debug)
 
-      # Reset to defaults for other tests
       SynapseAi.instance_variable_set(:@configuration, nil)
     end
   end
@@ -31,7 +30,6 @@ RSpec.describe SynapseAi do
     let(:mock_openai_adapter_instance) { instance_double(SynapseAi::Providers::OpenAIAdapter) }
 
     before do
-      # Ensure a clean state for configuration for each .current_provider context
       SynapseAi.instance_variable_set(:@configuration, nil)
     end
 
@@ -46,8 +44,6 @@ RSpec.describe SynapseAi do
         expect(SynapseAi::Providers::OpenAIAdapter).to have_received(:new).with(api_key: "fake_key")
       end
     end
-
-    
 
     context "when a different provider is configured" do
       it "raises a ConfigurationError mentioning only openai is supported" do

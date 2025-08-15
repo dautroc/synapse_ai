@@ -4,30 +4,10 @@ require "rails/railtie"
 require_relative "synapse_ai"
 
 module SynapseAi
-  # Integrates SynapseAI with Ruby on Rails applications.
-  # This Railtie makes SynapseAI configuration available during Rails initialization
-  # and logs a warning if the default provider (OpenAI) is selected without an API key.
   class Railtie < Rails::Railtie
-    # Allows configuration of SynapseAI through Rails application's initializers
-    # Example: config/initializers/synapse_ai.rb
-    #
-    #   SynapseAi.configure do |config|
-    #     config.openai_api_key = ENV["OPENAI_API_KEY"]
-    #     # config.provider = :openai
-    #     # config.log_level = :debug
-    #   end
     config.before_configuration do
-      # You can set up default configurations here if needed before app initializers run
+      # left empty for now
     end
-
-    # Initializers to run after the main application initializers
-    # initializer "synapse_ai.configure_ Fokus Ai_client" do |app|
-    #   # Code here would run after the application's initializers
-    #   # For example, to verify configuration or set up other components.
-    #   # if SynapseAi.configuration.openai_api_key.blank? && SynapseAi.configuration.provider == :openai
-    #   #   Rails.logger.warn "SynapseAI: OpenAI API key is not set. OpenAI provider may not function."
-    #   # end
-    # end
 
     config.after_initialize do
       if SynapseAi.configuration.provider == :openai && SynapseAi.configuration.openai_api_key.nil?
@@ -36,7 +16,6 @@ module SynapseAi
       end
     end
 
-    # You could also add generators or rake tasks here if needed
     generators do
       require_relative "../generators/synapse_ai/install/install_generator" # Adjusted path
     end

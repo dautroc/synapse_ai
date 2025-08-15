@@ -5,15 +5,9 @@ require "tiktoken_ruby"
 
 module SynapseAi
   module Providers
-    # Adapter for interacting with the OpenAI API.
-    # Implements chat, text generation, and embedding functionalities.
     class OpenAIAdapter < Base
       attr_reader :client, :api_key
 
-      # Initializes the OpenAIAdapter.
-      #
-      # @param api_key [String] The OpenAI API key.
-      # @raise [ArgumentError] If the API key is not provided or is empty.
       def initialize(api_key:)
         super()
         raise ArgumentError, "OpenAI API key is required." if api_key.nil? || api_key.empty?
@@ -22,12 +16,6 @@ module SynapseAi
         @client = OpenAI::Client.new(access_token: api_key)
       end
 
-      # Sends a chat request to the OpenAI API.
-      #
-      # @param messages [Array<Hash>] A list of message objects (e.g., [{ role: "user", content: "Hello" }]).
-      # @param model [String] The model to use (e.g., "gpt-3.5-turbo").
-      # @param options [Hash] Additional options to pass to the OpenAI API.
-      # @return [SynapseAi::Response] A standardized response object.
       def chat(messages:, model: "gpt-3.5-turbo", **options)
         response_content = nil
         error_message = nil
@@ -40,7 +28,7 @@ module SynapseAi
 
           if raw_response["choices"] && raw_response["choices"].first["message"]["content"]
             response_content = raw_response["choices"].first["message"]["content"]
-            token_usage = raw_response["usage"] || {} # Corrected
+            token_usage = raw_response["usage"] || {}
           else
             error_message = "No content in OpenAI response: #{raw_response}"
           end
@@ -65,15 +53,6 @@ module SynapseAi
         )
       end
 
-      # Generates text using the OpenAI API.
-      # Supports both completion models and chat models (by adapting the prompt).
-      #
-      # @param prompt [String] The prompt for text generation.
-      # @param model [String] The model to use (e.g., "text-davinci-003" or
-      #        "gpt-3.5-turbo"). Defaults to "gpt-3.5-turbo".
-      # @param max_tokens [Integer] The maximum number of tokens to generate.
-      # @param options [Hash] Additional options to pass to the OpenAI API.
-      # @return [SynapseAi::Response] A standardized response object.
       def generate_text(prompt:, model: "gpt-3.5-turbo", max_tokens: 150, **options)
         response_content = nil
         error_message = nil
@@ -84,7 +63,6 @@ module SynapseAi
           parameters = { model: model }.merge(options)
 
           if CHAT_MODELS.include?(model)
-            # Adapt to chat model if a chat model is specified for generate_text
             chat_messages = [{ role: "user", content: prompt }]
             parameters[:messages] = chat_messages
             parameters[:max_tokens] = max_tokens unless parameters.key?(:max_tokens)
@@ -96,7 +74,6 @@ module SynapseAi
               error_message = "No content in OpenAI chat response (for generate_text): #{raw_response}"
             end
           else
-            # Use completions endpoint for non-chat models
             parameters[:prompt] = prompt
             parameters[:max_tokens] = max_tokens unless parameters.key?(:max_tokens)
             raw_response = client.completions(parameters: parameters)
@@ -128,12 +105,6 @@ module SynapseAi
         )
       end
 
-      # Creates an embedding for the given text using the OpenAI API.
-      #
-      # @param text [String] The text to embed.
-      # @param model [String] The embedding model to use (e.g., "text-embedding-3-small").
-      # @param options [Hash] Additional options to pass to the OpenAI API.
-      # @return [SynapseAi::Response] Standardized response. Content is the embedding vector.
       def embed(text:, model: "text-embedding-3-small", **options)
         embedding_vector = nil
         error_message = nil

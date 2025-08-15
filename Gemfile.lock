@@ -21,8 +21,6 @@ GEM
     date (3.4.1)
     diff-lcs (1.6.2)
     erb (5.0.1)
-    ethon (0.16.0)
-      ffi (>= 1.15.0)
     event_stream_parser (1.0.0)
     faraday (2.13.1)
       faraday-net_http (>= 2.0, < 3.5)
@@ -32,12 +30,6 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
-    faraday-typhoeus (1.1.0)
-      faraday (~> 2.0)
-      typhoeus (~> 1.4)
-    ffi (1.17.2)
-    ffi (1.17.2-arm64-darwin)
-    ffi (1.17.2-x86_64-linux-gnu)
     hashdiff (1.2.0)
     io-console (0.8.0)
     irb (1.15.2)
@@ -45,12 +37,9 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.12.2)
-    jwt (2.10.1)
-      base64
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
-    multi_json (1.15.0)
     multipart-post (2.4.1)
     net-http (0.6.0)
       uri
@@ -111,8 +100,6 @@ GEM
     stringio (3.1.7)
     tiktoken_ruby (0.0.11.1-arm64-darwin)
     tiktoken_ruby (0.0.11.1-x86_64-linux)
-    typhoeus (1.4.1)
-      ethon (>= 0.9.0)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
@@ -126,6 +113,7 @@ GEM
     zeitwerk (2.7.3)
 
 PLATFORMS
+  arm64-darwin-22
   arm64-darwin-24
   x86_64-linux
 
@@ -142,4 +130,4 @@ DEPENDENCIES
   zeitwerk (~> 2.6)
 
 BUNDLED WITH
-   2.6.9
+   2.5.23

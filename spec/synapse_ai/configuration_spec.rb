@@ -4,7 +4,6 @@ require "spec_helper"
 
 RSpec.describe SynapseAi::Configuration do
   describe "#initialize" do
-    # Preserve original ENV values around tests that modify them
     around do |example|
       original_openai_key = ENV.fetch("OPENAI_API_KEY", nil)
       example.run
@@ -27,7 +26,7 @@ RSpec.describe SynapseAi::Configuration do
         expect(config.openai_api_key).to be_nil
       end
 
-      
+
 
       it "defaults log_level to :info" do
         expect(config.log_level).to eq(:info)
@@ -52,8 +51,6 @@ RSpec.describe SynapseAi::Configuration do
       it "uses ENV for openai_api_key if set" do
         expect(config.openai_api_key).to eq("env_openai_key")
       end
-
-      
     end
   end
 end
