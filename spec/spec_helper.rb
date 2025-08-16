@@ -1,11 +1,22 @@
 # frozen_string_literal: true
 
+require "simplecov"
+
+SimpleCov.start do
+  add_filter "/spec/"
+  add_filter "/vendor/"
+
+  add_group "Main", "lib"
+  minimum_coverage 80
+
+  formatter SimpleCov::Formatter::MultiFormatter.new([
+    SimpleCov::Formatter::HTMLFormatter,
+  ])
+end
+
 require "synapse_ai"
 require "vcr"
 require "webmock/rspec"
-require "simplecov"
-
-SimpleCov.start 'rails'
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
