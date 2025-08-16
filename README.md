@@ -29,7 +29,7 @@ Here's how you might use SynapseAI within a Rails model to generate a summary fo
 ``` ruby
 class Article < ApplicationRecord
   def generate_summary_with_synapse
-    prompt_text = "Summarize the following text concisely, in no more than 3 sentences:\n\n#{self.content}"
+    prompt_text = "Summarize the content: #{self.content}"
 
     response = SynapseAi.generate_text(
       prompt: prompt_text,
@@ -37,18 +37,7 @@ class Article < ApplicationRecord
       max_tokens: 100        
     )
 
-    if response.success?
-      self.summary = response.content.strip
-      true
-    else
-      Rails.logger.error "SynapseAI Error generating summary for Article ##{id}: #{response.error}"
-      self.summary = "Could not generate summary at this time."
-      false
-    end
-  rescue StandardError => e
-    Rails.logger.error "SynapseAI: Unexpected error during summary generation for Article ##{id}: #{e.message}"
-    self.summary = "Could not generate summary due to an unexpected issue."
-    false
+    puts response.content.strip
   end
 end
 ```

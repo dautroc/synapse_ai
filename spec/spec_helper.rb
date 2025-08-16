@@ -3,6 +3,9 @@
 require "synapse_ai"
 require "vcr"
 require "webmock/rspec"
+require "simplecov"
+
+SimpleCov.start 'rails'
 
 WebMock.disable_net_connect!(allow_localhost: true)
 

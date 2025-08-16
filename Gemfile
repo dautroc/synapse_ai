@@ -14,5 +14,9 @@ group :development, :test do
   gem "byebug"
 end
 
+group :test do
+  gem "simplecov", require: false
+end
+
 gem "tiktoken_ruby", "~> 0.0.6"
 gem "zeitwerk", "~> 2.6"
