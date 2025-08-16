@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails/railtie"
-require_relative "synapse_ai"
 
 module SynapseAi
   class Railtie < Rails::Railtie
